@@ -3,6 +3,7 @@
 """
 import numpy as np
 import random
+import time
 
 SHIFT_CONSTANT = 2
 
@@ -133,6 +134,23 @@ class PRNGQG():
             seq = seq[:limit]
         return seq
 
+    def extract_qg(self):
+        seq = []
+        for i in range(self.N):
+            seq += self.QG[i]
+        return seq
+
+    def Generate_Number_Sequence1(self, seed_key="haha", limit_shuffle=2, limit=10):
+        seq = []
+        s1, s2 = self.generate_seed_from_string(seed_key)
+        self.Shuffle_Matrix(s1, s2, limit_shuffle)
+        while (len(seq) < limit):
+            seq += self.extract_qg()
+            self.Shuffle_Matrix(s1, s2, limit_shuffle)
+        if (len(seq) > limit):
+            seq = seq[:limit]
+        return seq
+
     def Save_Matrix(self, filename):
         """
             Function to save the current matrix state in filename
@@ -150,8 +168,11 @@ class PRNGQG():
         """
             Shuffle a sequence using provided seed using Fisher-Yates shuffle
         """
-        randomizer = PRNGQG(len(seq)-1)
-        rand_seq = randomizer.Generate_Number_Sequence(key_seed, limit_shuffle=5, limit=len(seq))
+        start = time.time()
+        rand_seq = self.Generate_Number_Sequence(key_seed, limit_shuffle=2, limit=len(seq))
+        # rand_seq = self.Generate_Number_Sequence1(key_seed, limit_shuffle=2, limit=len(seq))
+        end = time.time()
+        print ("Runtime : {}".format(end-start))
         if (opt):
             i = len(seq)-1
             k = len(seq)-1
@@ -180,14 +201,12 @@ def main():
     print ("Random number generator : {}".format(rnd))
 
     # Test shuffle
-    seq = [x for x in range(30)]
+    seq = [x for x in range(92507)]
     key = "otista"
-    randomizer = PRNGQG(len(seq))
-    print (seq)
+    randomizer = PRNGQG(256)
     seq = randomizer.shuffle(seq, key, True)
-    print (seq)
+    print (seq[:50])
     seq = randomizer.shuffle(seq, key, False)
-    print (seq)
 
 if __name__ == '__main__':
     main()
