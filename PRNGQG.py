@@ -146,16 +146,29 @@ class PRNGQG():
                         f.write("{}".format(self.QG[i][j]))
                 f.write("\n")
 
-    def shuffle(self, seq, key_seed):
+    def shuffle(self, seq, key_seed, opt):
         """
             Shuffle a sequence using provided seed using Fisher-Yates shuffle
         """
         randomizer = PRNGQG(len(seq)-1)
-        rand_seq = randomizer.Generate_Number_Sequence(key_seed, limit_shuffle=4, limit=len(seq))
-        for i in range(len(seq)):
-            tmp = seq[i]
-            seq[i] = seq[rand_seq[i]]
-            seq[rand_seq[i]] = tmp
+        rand_seq = randomizer.Generate_Number_Sequence(key_seed, limit_shuffle=5, limit=len(seq))
+        if (opt):
+            i = len(seq)-1
+            k = len(seq)-1
+            while (i > 1):
+                j = rand_seq[k] % i
+                seq[j], seq[i] = seq[i], seq[j]
+                i = i - 1
+                k = k - 1
+        else:
+            i = 1
+            k = 1
+            while (i < len(seq)):
+                j = rand_seq[k] % i
+                seq[j], seq[i] = seq[i], seq[j]
+                i = i + 1
+                k = k + 1
+
         return seq
 
     def get_number(self, seed):
@@ -167,12 +180,13 @@ def main():
     print ("Random number generator : {}".format(rnd))
 
     # Test shuffle
-    seq = [x for x in range(20)]
+    seq = [x for x in range(30)]
     key = "otista"
     randomizer = PRNGQG(len(seq))
-    seq = randomizer.shuffle(seq, key)
     print (seq)
-    seq = randomizer.shuffle(seq, key)
+    seq = randomizer.shuffle(seq, key, True)
+    print (seq)
+    seq = randomizer.shuffle(seq, key, False)
     print (seq)
 
 if __name__ == '__main__':
