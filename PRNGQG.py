@@ -7,6 +7,7 @@ import time
 from RandomnessTest import RandomnessTest
 
 SHIFT_CONSTANT = 2
+ALPHA = 0.01
 
 class PRNGQG():
     def __init__(self, N=256):
@@ -197,21 +198,39 @@ class PRNGQG():
         seq = self.Generate_Number_Sequence(limit=seed+SHIFT_CONSTANT)
         return seq[seed]
 
-def main():
-    rnd = PRNGQG(2).Generate_Number_Sequence(limit_shuffle=2, limit=20)
-    print ("Random number generator : {}".format(rnd))
 
-    # Test shuffle
-    # seq = [x for x in range(92507)]
-    # key = "otista"
-    # randomizer = PRNGQG(256)
-    # seq = randomizer.shuffle(seq, key, True)
-    # seq = randomizer.shuffle(seq, key, False)
+def main():
+    start = time.time()
+    rnd = PRNGQG(12).Generate_Number_Sequence(limit_shuffle=5, limit=128)
+    end = time.time()
+    print ("Randomizer Runtime : {} ms".format(end-start))
+    rnd = [(x%2) for x in rnd]
+    # print ("Random number generator : {}".format(rnd))
 
     # Monobit test
     rnd = [str(x) for x in rnd]
-    result = RandomnessTest().monobit(rnd)
-    print (result)
-    
+    p_val = RandomnessTest().monobit(rnd)
+    print ("Monobit P_Val Test : {}".format(p_val))
+    if (p_val > ALPHA):
+        print ("Random")
+    else:
+        print ("Not Random")
+    p_val = RandomnessTest().block_frequency(rnd, block_size=10)
+    print ("Block Frequency P_Val Test : {}".format(p_val))
+    if (p_val > ALPHA):
+        print ("Random")
+    else:
+        print ("Not Random")
+
+    p_val = RandomnessTest().longest_runs(rnd)
+    print ("Longest Run Frequency P_Val Test : {}".format(p_val))
+    if (p_val > ALPHA):
+        print ("Random")
+    else:
+        print ("Not Random")
+
+    # Comparison with default randomizer in python
+    s = [random.randint(0, 1) for x in range(100)]
+
 if __name__ == '__main__':
     main()
