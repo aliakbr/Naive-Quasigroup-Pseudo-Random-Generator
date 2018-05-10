@@ -4,6 +4,7 @@
 import numpy as np
 import random
 import time
+from RandomnessTest import RandomnessTest
 
 SHIFT_CONSTANT = 2
 
@@ -197,16 +198,20 @@ class PRNGQG():
         return seq[seed]
 
 def main():
-    rnd = PRNGQG(11).get_number(9)
+    rnd = PRNGQG(2).Generate_Number_Sequence(limit_shuffle=2, limit=20)
     print ("Random number generator : {}".format(rnd))
 
     # Test shuffle
-    seq = [x for x in range(92507)]
-    key = "otista"
-    randomizer = PRNGQG(256)
-    seq = randomizer.shuffle(seq, key, True)
-    print (seq[:50])
-    seq = randomizer.shuffle(seq, key, False)
+    # seq = [x for x in range(92507)]
+    # key = "otista"
+    # randomizer = PRNGQG(256)
+    # seq = randomizer.shuffle(seq, key, True)
+    # seq = randomizer.shuffle(seq, key, False)
 
+    # Monobit test
+    rnd = [str(x) for x in rnd]
+    result = RandomnessTest().monobit(rnd)
+    print (result)
+    
 if __name__ == '__main__':
     main()
